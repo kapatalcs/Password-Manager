@@ -23,7 +23,7 @@ def generate_strong_password(length: int = 16) -> str:
     digits = string.digits
     symbols = "!@#$%^&*()-_=+[]{};:,.<>?/|\\"
 
-    # en az bir tane her gruptan ekleyelim
+    
     password_chars = [
         secrets.choice(alphabet_lower),
         secrets.choice(alphabet_upper),
@@ -31,11 +31,11 @@ def generate_strong_password(length: int = 16) -> str:
         secrets.choice(symbols),
     ]
 
-    # kalan karakterleri rastgele doldur
+    
     all_chars = alphabet_lower + alphabet_upper + digits + symbols
     for _ in range(length - len(password_chars)):
         password_chars.append(secrets.choice(all_chars))
 
-    # karıştır ve stringe çevir
+   
     secrets.SystemRandom().shuffle(password_chars)
     return ''.join(password_chars)

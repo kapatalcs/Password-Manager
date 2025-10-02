@@ -16,7 +16,7 @@ class MasterPasswordWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Master Şifre Oluştur")
-        self.setGeometry(200,200,400,220)  # biraz daha yükseklik verdik
+        self.setGeometry(200,200,400,220)
 
         self.label1 = QLabel("Master Şifre:")
         self.input1 = QLineEdit()
@@ -26,7 +26,7 @@ class MasterPasswordWindow(QWidget):
         self.input2 = QLineEdit()
         self.input2.setEchoMode(QLineEdit.EchoMode.Password)
 
-        # Şifreyi göster checkbox
+       
         self.show_pw_checkbox = QCheckBox("Şifreyi Göster")
         self.show_pw_checkbox.stateChanged.connect(self.toggle_password_visibility)
 
@@ -58,7 +58,7 @@ class MasterPasswordWindow(QWidget):
             return
         
         try:
-            create_master_password(pw1)  # ValueError fırlatabilir
+            create_master_password(pw1)  
         except ValueError as e:
             QMessageBox.warning(self, "Zayıf Şifre", str(e))
             return
@@ -73,13 +73,13 @@ class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Şifre Kasası - Giriş")
-        self.setGeometry(200,200,300,180)  # biraz daha yükseklik verdik
+        self.setGeometry(200,200,300,180)  
 
         self.label = QLabel("Master Şifre:")
         self.input = QLineEdit()
         self.input.setEchoMode(QLineEdit.EchoMode.Password)
 
-        # Şifreyi göster checkbox
+        
         self.show_pw_checkbox = QCheckBox("Şifreyi Göster")
         self.show_pw_checkbox.stateChanged.connect(self.toggle_password_visibility)
 
@@ -115,7 +115,7 @@ class MainWindow(QWidget):
         self.setWindowTitle("Şifre Kasası")
         self.setGeometry(200, 200, 700, 450)
 
-        # Inputs
+       
         self.service_input = QLineEdit()
         self.service_input.setPlaceholderText("Servis")
 
@@ -131,24 +131,24 @@ class MainWindow(QWidget):
         self.show_pw_checkbox = QCheckBox("Şifreleri Göster")
         self.show_pw_checkbox.stateChanged.connect(self.toggle_password_visibility)
 
-        # Table
+       
         self.table = QTableWidget()
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Servis","Kullanıcı","Şifre"])
         self.table.setAlternatingRowColors(True)
 
-        # Hesap sil ve şifre kopyala
+        
         self.delete_button = QPushButton("Seçili Hesabı Sil")
         self.delete_button.clicked.connect(self.delete_account_gui)
 
         self.copy_pw_button = QPushButton("Seçili Şifreyi Kopyala")
         self.copy_pw_button.clicked.connect(self.copy_password)
 
-        # **Master şifre değiştir butonu**
+        
         self.change_master_button = QPushButton("Master Şifre Değiştir")
         self.change_master_button.clicked.connect(self.change_master_password)
 
-        # Layout
+       
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.service_input)
         input_layout.addWidget(self.username_input)
@@ -163,11 +163,11 @@ class MainWindow(QWidget):
         btn_layout = QHBoxLayout()
         btn_layout.addWidget(self.delete_button)
         btn_layout.addWidget(self.copy_pw_button)
-        btn_layout.addWidget(self.change_master_button)  # buraya ekledik
+        btn_layout.addWidget(self.change_master_button)  
         layout.addLayout(btn_layout)
 
         self.setLayout(layout)
-        # Stil aynı şekilde
+        
         self.setStyleSheet("""
             QWidget { background-color: #2b2b2b; color: #eee; font-family: Arial; font-size:14px; }
             QPushButton { background-color: #4CAF50; color:white; border-radius:8px; padding:6px; font-weight:bold; }
@@ -186,7 +186,7 @@ class MainWindow(QWidget):
         password = generate_strong_password().encode()
         encrypted = encrypt(password, self.master_password)
         add_account(service, username, encrypted)
-        # Panoya kopyala
+      
         QApplication.clipboard().setText(password.decode())
         QMessageBox.information(self,"Başarılı",f"Hesap eklendi ve şifre panoya kopyalandı!\nŞifre: {password.decode()}")
         self.load_accounts()
@@ -197,7 +197,7 @@ class MainWindow(QWidget):
             pw_item = self.table.item(row,2)
             if pw_item:
                 pw = pw_item.text()
-                # Şifre gizli ise decrypt yap
+               
                 if pw.startswith("*"):
                     service = self.table.item(row,0).text()
                     user = self.table.item(row,1).text()
@@ -218,14 +218,14 @@ class MainWindow(QWidget):
             QMessageBox.warning(self,"Eksik","Servis ve kullanıcı girilmeli!")
             return
 
-        # Aynı servis + kullanıcı adı kontrolü
+       
         existing = list_accounts(service)
         for s,u,enc_pw in existing:
             if u == username:
                 QMessageBox.warning(self,"Hata","Bu servis ve kullanıcı adı zaten mevcut!")
                 return
 
-    # Hesap ekleme
+    
         password = generate_strong_password().encode()
         encrypted = encrypt(password, self.master_password)
         add_account(service, username, encrypted)
@@ -268,32 +268,32 @@ class MainWindow(QWidget):
             QMessageBox.warning(self,"Hata","Bir hesap seçin.")
 
     def toggle_password_visibility(self):
-        self.load_accounts()  # checkbox değişince tabloyu yeniden yükle
+        self.load_accounts()  
     
     def change_master_password(self):
-    # Pencereyi gösterecek QWidget
+   
         dlg = QWidget()
         dlg.setWindowTitle("Master Şifre Değiştir")
         dlg.setGeometry(300, 300, 400, 200)
 
         layout = QVBoxLayout()
 
-        # Mevcut şifre
+       
         label_current = QLabel("Mevcut Master Şifre:")
         input_current = QLineEdit()
         input_current.setEchoMode(QLineEdit.EchoMode.Password)
 
-        # Yeni şifre
+       
         label_new = QLabel("Yeni Şifre:")
         input_new = QLineEdit()
         input_new.setEchoMode(QLineEdit.EchoMode.Password)
 
-        # Yeni şifre tekrar
+       
         label_new2 = QLabel("Yeni Şifre Tekrar:")
         input_new2 = QLineEdit()
         input_new2.setEchoMode(QLineEdit.EchoMode.Password)
 
-        # Şifreyi göster checkbox
+       
         show_pw_checkbox = QCheckBox("Şifreleri Göster")
         def toggle_pw():
             mode = QLineEdit.EchoMode.Normal if show_pw_checkbox.isChecked() else QLineEdit.EchoMode.Password
@@ -302,7 +302,7 @@ class MainWindow(QWidget):
             input_new2.setEchoMode(mode)
         show_pw_checkbox.stateChanged.connect(toggle_pw)
 
-        # Değiştir butonu
+       
         button_change = QPushButton("Değiştir")
         def do_change():
             current_pw = input_current.text()
@@ -328,7 +328,7 @@ class MainWindow(QWidget):
                 QMessageBox.warning(dlg,"Hata","Şifre en az bir özel karakter içermeli!")
                 return
 
-            # Hesapları güncelle
+           
             conn = sql.connect(DB_NAME)
             cursor = conn.cursor()
             cursor.execute("SELECT id, password FROM accounts")

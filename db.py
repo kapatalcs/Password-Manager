@@ -45,11 +45,9 @@ def delete_account(service, username=None):
     if count == 0:
         print("Bu servis bulunamadı.")
     elif count == 1 and username is None:
-        # Tek kayıt varsa direkt sil
         cursor.execute("DELETE FROM accounts WHERE service = ?", (service,))
         print(f"{service} servisine ait hesap silindi.")
     else:
-        # Birden fazla varsa username lazım
         while True:
             if username is None:
                 print(f"{service} için birden fazla hesap bulundu, username belirtmelisin: ")
@@ -64,7 +62,7 @@ def delete_account(service, username=None):
 
             if cursor.rowcount == 0:
                 print(f"{service} için '{username}' kullanıcı adı bulunamadı.")
-                username = None  # tekrar sorabilmek için resetle
+                username = None  
             else:
                 print(f"{service} - {username} hesabı silindi.")
                 break
@@ -76,9 +74,9 @@ def delete_account(service, username=None):
 def list_accounts(service: str = None):
     conn = sql.connect(DB_NAME)
     cursor = conn.cursor()
-    if service:  # belirli servis seçildiyse
+    if service: 
         cursor.execute("SELECT service, username, password FROM accounts WHERE service=?", (service,))
-    else:  # tüm hesaplar
+    else:  
         cursor.execute("SELECT service, username, password FROM accounts")
     rows = cursor.fetchall()
     conn.close()
@@ -108,7 +106,6 @@ def create_master_password_db():
 
 
 def create_master_password(master_password: str):
-    # Şifre kuralları kontrolü
     if len(master_password) < 8:
         raise ValueError("Şifre en az 8 karakter olmalı")
     if not any(c.isupper() for c in master_password):
@@ -120,11 +117,10 @@ def create_master_password(master_password: str):
     if not any(c in string.punctuation for c in master_password):
         raise ValueError("Şifre en az bir özel karakter içermeli")
 
-    # Salt ve hash oluştur
-    salt = get_random_bytes(16)  # 16 byte random salt
+    salt = get_random_bytes(16)
     hash_pw = PBKDF2(master_password, salt, dkLen=KEY_LEN, count=PBKDF2_ITERATIONS)
 
-    # Veritabanına kaydet
+   
     conn = sql.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("INSERT INTO master_key (salt, hash) VALUES (?, ?)", (salt, hash_pw))
@@ -140,7 +136,7 @@ def verify_master_password(entered_password: str) -> bool:
     conn.close()
 
     if row is None:
-        return False  # Henüz master password yok
+        return False  
 
     salt, stored_hash = row
     entered_hash = PBKDF2(entered_password, salt, dkLen=KEY_LEN, count=PBKDF2_ITERATIONS)

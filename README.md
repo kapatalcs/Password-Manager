@@ -45,7 +45,7 @@ python main.py
 - The master password is stored using **salt + PBKDF2**.
 - Unique strong passwords can be generated for each account.
 
-## 📜 Licence
+## Licence
 This project is licensed under MIT.
 
 ## Notes
